@@ -18,4 +18,12 @@ class Review extends Model
         'rating',
         'komentar',
     ];
+
+    public function pelanggan() {
+        return $this->belongsTo(Pelanggan::class, 'id_pelanggan');
+    }
+
+    public function layanan() {
+        return $this->belongsTo(Layanan::class, 'id_pesanan');
+    }
 }
