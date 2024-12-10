@@ -6,6 +6,7 @@ use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\BarberController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\PesananController;
 
 Route::post('/pelanggan', [PelangganController::class, 'store']);
 Route::post('/barber', [BarberController::class, 'store']);
@@ -17,5 +18,9 @@ Route::post('/login', [PelangganController::class, 'login']);
 Route::get('/reviews', [ReviewController::class, 'index']);
 Route::get('/reviews/barber/{barber_id}', [ReviewController::class, 'getReviewsByBarber']);
 Route::post('/reviews', [ReviewController::class, 'store']);
+Route::post('/pesanan', [PesananController::class, 'store']);
 Route::middleware('auth:sanctum')->post('/logout', [PelangganController::class, 'logout']);
+Route::middleware('auth:sanctum')->get('/pelanggan/profile', [PelangganController::class, 'profile']);
+Route::middleware('auth:sanctum')->put('/pelanggan/profile', [PelangganController::class, 'updateProfile']);
+Route::middleware('auth:sanctum')->get('/transaction-history', [PesananController::class, 'transactionHistory']);
 

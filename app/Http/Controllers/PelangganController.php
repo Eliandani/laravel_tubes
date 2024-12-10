@@ -101,4 +101,72 @@ class PelangganController extends Controller
 
         return response()->json(['message' => 'Not logged in'], 401);
     }
+
+    public function profile()
+    {
+        $pelanggan = Auth::user(); 
+
+        if (!$pelanggan) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        return response()->json([
+            'id' => $pelanggan->id,
+            'name' => $pelanggan->nama,
+            'username' => $pelanggan->username,
+            'email' => $pelanggan->email,
+            'telepon' => $pelanggan->telepon,
+        ], 200);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $pelanggan = Auth::user(); 
+
+        if (!$pelanggan) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $request->validate([
+            'nama' => 'sometimes|required|string|max:255',
+            'username' => 'sometimes|required|string|unique:pelanggans,username,' . $pelanggan->id . '|max:255',
+            'email' => 'sometimes|required|email|unique:pelanggans,email,' . $pelanggan->id . '|max:255',
+            'telepon' => 'sometimes|required|string|max:15',
+            'password' => 'sometimes|required|string|min:6',
+        ]);
+
+        $pelanggan->update([
+            'nama' => $request->nama ?? $pelanggan->nama,
+            'username' => $request->username ?? $pelanggan->username,
+            'email' => $request->email ?? $pelanggan->email,
+            'telepon' => $request->telepon ?? $pelanggan->telepon,
+            'password' => $request->password ? bcrypt($request->password) : $pelanggan->password,
+        ]);
+
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'data' => $pelanggan,
+        ], 200);
+    }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:6',
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json(['message' => 'Current password is incorrect'], 400);
+        }
+
+        $user->password = bcrypt($request->new_password);
+        $user->save();
+
+        return response()->json(['message' => 'Password changed successfully'], 200);
+    }
+
+
 }

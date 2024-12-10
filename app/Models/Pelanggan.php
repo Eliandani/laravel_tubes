@@ -15,5 +15,10 @@ class Pelanggan extends Authenticatable
     protected $primaryKey = "id";
 
     protected $fillable = ['nama', 'username', 'email', 'telepon', 'password'];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 }
 
